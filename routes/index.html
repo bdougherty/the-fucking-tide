@@ -1,0 +1,242 @@
+<svelte:head>
+	<title>The Fucking Tide</title>
+</svelte:head>
+
+<div class="wrapper">
+	{#if findingLocation}
+		<h1 class="loading">Finding your fucking location…</h1>
+	{:elseif locationError}
+		<h1>Where the fuck are you?</h1>
+		<input type="text"/><button type="button">Fucking Tide</button>
+	{:elseif checkingTide}
+		<h1 class="loading">Checking the fucking tide…</h1>
+	{:else}
+		<h1 class="the-fucking-tide">{message}</h1>
+		<p class="station">at {stationName}</p>
+	{/if}
+</div>
+
+<!-- {#if previousTide}
+	<p>{previousTide.type} {previousTide.time}</p>
+{/if}
+{#if nextTide}
+	<p>{nextTide.type} {nextTide.time}</p>
+{/if} -->
+
+<style>
+	.wrapper {
+		margin: 0 0 2em;
+	}
+
+	.loading {
+		color: #595959;
+		font-weight: 500;
+	}
+
+	h1 {
+		text-transform: uppercase;
+		margin: 0;
+	}
+
+	.the-fucking-tide {
+		font-size: 2.5rem;
+	}
+
+	.station {
+		margin: 0.25rem 0 0;
+		font-size: 0.8rem;
+		color: #595959;
+	}
+</style>
+
+<script>
+	const getHighTideEmoji = () => {
+		const emojis = [
+			'🤙',
+			'🏄‍♀️',
+			'🏄‍♂️',
+			'🚤',
+			'🏖'
+		];
+
+		return emojis[Math.floor(Math.random() * emojis.length)];
+	};
+
+	export default {
+		data() {
+			return {
+				findingLocation: true,
+				locationError: false,
+				checkingTide: false,
+				location: null,
+				stationName: null,
+				predictions: []
+			};
+		},
+		onstate({ changed, current, previous }) {
+			if (!previous && !current.location) {
+				this.set({
+					findingLocation: true
+				});
+
+				this.getGeolocation()
+					.then((location) => {
+						this.set({
+							findingLocation: false,
+							checkingTide: true,
+							location
+						});
+					})
+					.catch((error) => {
+						this.set({
+							findingLocation: false,
+							locationError: true
+						});
+					});
+
+				return;
+			}
+
+			if (changed.location && current.location) {
+				const { lat, lon } = current.location;
+
+				this.set({
+					findingLocation: false,
+					checkingTide: true
+				});
+
+				this.fetchPredictions({ lat, lon }).then(({ name, predictions }) => {
+					this.set({
+						checkingTide: false,
+						stationName: name,
+						predictions
+					});
+				});
+
+				return;
+			}
+		},
+		computed: {
+			nextTide: ({ predictions }) => {
+				if (predictions.length === 0) {
+					return null;
+				}
+
+				return predictions.find((prediction) => {
+					return new Date(prediction.time) > new Date();
+				});
+			},
+			previousTide: ({ nextTide, predictions }) => {
+				if (predictions.length === 0) {
+					return null;
+				}
+
+				const index = predictions.indexOf(nextTide);
+				return predictions[index - 1];
+			},
+			tideProgress: ({ previousTide, nextTide }) => {
+				if (!previousTide || !nextTide) {
+					return -1;
+				}
+
+				const timeSincePreviousTide = new Date() - new Date(previousTide.time);
+				const tideDifference = new Date(nextTide.time) - new Date(previousTide.time);
+				const progress = timeSincePreviousTide / tideDifference;
+
+				return progress;
+			},
+			message: ({ tideProgress, nextTide }) => {
+				if (tideProgress === -1) {
+					return '';
+				}
+
+				const messages = {
+					'low': 'Ugh, it’s fucking low tide.',
+					'rising1': 'The tide’s still pretty fucking low.',
+					'rising2': 'It’s almost fucking high tide.',
+					'high': `It’s fucking high tide. ${getHighTideEmoji()}`,
+					'falling1': 'The tide’s fucking ok, I guess.',
+					'falling2': 'The tide’s getting fucking low.',
+				};
+
+				const rising = nextTide.type === 'high';
+
+				if (tideProgress < 0.3) {
+					return rising ? messages.low : messages.high;
+				}
+
+				if (tideProgress < 0.6) {
+					return rising ? messages.rising1 : messages.falling1;
+				}
+
+				if (tideProgress < 0.7) {
+					return rising ? messages.rising2 : messages.falling2;
+				}
+
+				return rising ? messages.high : messages.low;
+			}
+		},
+		methods: {
+			getGeolocation() {
+				return new Promise((resolve, reject) => {
+					const success = ({ coords }) => {
+						resolve({
+							lat: coords.latitude,
+							lon: coords.longitude
+						});
+					};
+
+					if (!navigator.geolocation) {
+						reject(new Error('Geolocation not available in this browser.'));
+					}
+
+					navigator.geolocation.getCurrentPosition(success, reject)
+				});
+			},
+			makeGraphQLRequest(query, variables) {
+				return fetch('http://localhost:3002/graphql', {
+					method: 'POST',
+					headers: {
+						'content-type': 'application/json'
+					},
+					body: JSON.stringify({
+						query: query.replace(/\s+/g, ' ').replace(/\s?([{}():])\s?/g, '$1').trim(),
+						variables
+					})
+				}).then((response) => {
+					return response.json();
+				}).then((json) => {
+					if (json.errors) {
+						console.info(json.errors);
+						throw new Error('there was an error');
+					}
+
+					return json.data;
+				});
+			},
+			fetchPredictions({ lat, lon }) {
+				const query = `
+					query($coordinate: Coordinate!) {
+						tideStations(coordinate: $coordinate, limit: 1) {
+							name
+							distance
+							predictions {
+								type
+								time
+							}
+						}
+					}
+				`;
+
+				return this.makeGraphQLRequest(query, {
+					coordinate: {
+						lat,
+						lon
+					}
+				}).then((data) => {
+					return data.tideStations[0];
+				});
+			}
+		}
+	};
+</script>
