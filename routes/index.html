@@ -150,7 +150,7 @@
 				});
 			},
 			makeGraphQLRequest(query, variables) {
-				return fetch('http://localhost:3002/graphql', {
+				return fetch('https://api.tides.app/graphql', {
 					method: 'POST',
 					headers: {
 						'content-type': 'application/json'
