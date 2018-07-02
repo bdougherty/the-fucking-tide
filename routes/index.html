@@ -8,6 +8,9 @@
 	<Search on:search="handleSearch(event)" />
 {:elseif checkingTide}
 	<LoadingMessage>Checking the fucking tide</LoadingMessage>
+{:elseif tideError}
+	<h1>We fucked up</h1>
+	<p>Check back later.</p>
 {:else}
 	<Message station={stationName} progress={tideProgress} rising={nextTide.type === 'high'} />
 {/if}
@@ -29,6 +32,7 @@
 				findingLocation: true,
 				locationError: false,
 				checkingTide: false,
+				tideError: false,
 				location: null,
 				stationName: null,
 				predictions: []
@@ -85,6 +89,11 @@
 						stationName: name,
 						predictions
 					});
+				}).catch((error) => {
+					this.set({
+						checkingTide: false,
+						tideError: true
+					});
 				});
 
 				return;
@@ -130,6 +139,11 @@
 				return this.geocode(event.searchText).then(({ lat, lon }) => {
 					this.set({
 						location: { lat, lon }
+					});
+				}).catch((error) => {
+					this.set({
+						checkingTide: false,
+						tideError: true
 					});
 				});
 			},
