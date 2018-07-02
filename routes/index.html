@@ -43,10 +43,7 @@
 				clearInterval(this.interval);
 			}
 
-			this.interval = setInterval(() => {
-				console.log('updating time');
-				this.set({ time: new Date() });
-			}, 1000 * 60);
+			this.interval = setInterval(() => this.updateTime(), 1000 * 60);
 		},
 		ondestroy() {
 			clearInterval(this.interval);
@@ -117,6 +114,13 @@
 				const index = predictions.indexOf(nextTide);
 				return predictions[index - 1];
 			},
+			needToFetchPredictions: ({ nextTide, predictions }) => {
+				if (predictions.indexOf(nextTide) === predictions.length - 1) {
+					return true;
+				}
+
+				return false;
+			},
 			tideProgress: ({ time, previousTide, nextTide }) => {
 				if (!previousTide || !nextTide) {
 					return -1;
@@ -130,6 +134,24 @@
 			}
 		},
 		methods: {
+			updateTime() {
+				this.set({
+					time: new Date()
+				});
+
+				const { needToFetchPredictions } = this.get();
+
+				// If there are no more predictions, fetch them
+				if (location && needToFetchPredictions) {
+					this.fetchPredictions(location).then(({ name, predictions }) => {
+						this.set({
+							checkingTide: false,
+							stationName: name,
+							predictions
+						});
+					});
+				}
+			},
 			handleSearch(event) {
 				this.set({
 					locationError: false,
