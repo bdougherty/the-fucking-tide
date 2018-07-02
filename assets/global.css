@@ -18,3 +18,8 @@ body {
 a {
 	color: #00ced1;
 }
+
+h1 {
+	text-transform: uppercase;
+	margin: 0;
+}

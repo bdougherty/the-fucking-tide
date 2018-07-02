@@ -1,0 +1,75 @@
+<form on:submit="submit(event)">
+	<h1>Where the fuck are you?</h1>
+	<div class="fields">
+		<input type="search" class="shadow" bind:value=searchText />
+		<button class="shadow" ref:submitButton>Fucking Tide</button>
+	</div>
+</form>
+
+<style>
+	.fields {
+		margin-top: 1rem;
+		display: flex;
+		align-content: center;
+	}
+
+	.shadow {
+		border-radius: 5px;
+		box-shadow: 0 1px 5px rgba(50, 50, 50, 0.2);
+	}
+
+	input[type="search"] {
+		border: 2px solid #00ced1;
+		font-size: 1.2rem;
+		height: 2rem;
+		padding: .2rem .75rem;
+		flex: 1 1 auto;
+		transition: box-shadow 100ms, border 100ms;
+	}
+
+	/* input[type="search"]:focus {
+		outline: 2px solid #00ced1;
+	} */
+
+	button {
+		font-size: 1rem;
+		border: 0;
+		height: 2rem;
+		color: #000;
+		background-color: #00ced1;
+		padding: 0.4rem 0.8rem;
+		margin-left: 1rem;
+		transition: transform 250ms, box-shadow 100ms;
+	}
+
+	button:active:not(:disabled) {
+		transform: scale(0.95);
+	}
+
+	input[type="search"]:focus,
+	button:focus {
+		outline: 0;
+		box-shadow: 0 0 0 3px #008284;
+	}
+</style>
+
+<script>
+	export default {
+		data() {
+			return {
+				searchText: ''
+			}
+		},
+		methods: {
+			submit(event) {
+				event.preventDefault();
+				this.refs.submitButton.disabled = true;
+
+				const { searchText } = this.get();
+				this.fire('search', {
+					searchText
+				});
+			}
+		}
+	};
+</script>

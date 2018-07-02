@@ -1,0 +1,61 @@
+<div>
+	<h1 class="the-fucking-tide">{message}</h1>
+	<p class="station">at {station}</p>
+</div>
+
+<style>
+	.the-fucking-tide {
+		font-size: 2.5rem;
+	}
+
+	.station {
+		font-size: 0.8rem;
+		color: #595959;
+		margin: 0.25rem 0 0;
+	}
+</style>
+
+<script>
+	const getHighTideEmoji = () => {
+		const emojis = [
+			'🤙',
+			'🏄‍♀️',
+			'🏄‍♂️',
+			'🚤',
+			'🏖',
+			'😎',
+			'💯'
+		];
+
+		return emojis[Math.floor(Math.random() * emojis.length)];
+	};
+
+	export default {
+		computed: {
+			message: ({ progress, rising }) => {
+				const messages = {
+					'low': 'Ugh, it’s fucking low tide. 😫',
+					'rising1': 'The tide’s still pretty fucking low. 😞',
+					'rising2': 'It’s almost fucking high tide. 🙌',
+					'high': `It’s fucking high tide. ${getHighTideEmoji()}`,
+					'falling1': 'The tide’s fucking ok, I guess.',
+					'falling2': 'The tide’s getting fucking low. 😞',
+				};
+
+				if (progress < 0.3) {
+					return rising ? messages.low : messages.high;
+				}
+
+				if (progress < 0.6) {
+					return rising ? messages.rising1 : messages.falling1;
+				}
+
+				if (progress < 0.7) {
+					return rising ? messages.rising2 : messages.falling2;
+				}
+
+				return rising ? messages.high : messages.low;
+			}
+		}
+	};
+</script>

@@ -2,69 +2,38 @@
 	<title>The Fucking Tide</title>
 </svelte:head>
 
-<div class="wrapper">
+<div class="container">
 	{#if findingLocation}
-		<h1 class="loading">Finding your fucking location…</h1>
+		<LoadingMessage>Finding your fucking location</LoadingMessage>
 	{:elseif locationError}
-		<h1>Where the fuck are you?</h1>
-		<input type="text"/><button type="button">Fucking Tide</button>
+		<Search on:search="handleSearch(event)" />
 	{:elseif checkingTide}
-		<h1 class="loading">Checking the fucking tide…</h1>
+		<LoadingMessage>Checking the fucking tide</LoadingMessage>
 	{:else}
-		<h1 class="the-fucking-tide">{message}</h1>
-		<p class="station">at {stationName}</p>
+		<Message station={stationName} progress={tideProgress} rising={nextTide.type === 'high'} />
 	{/if}
 </div>
 
-<!-- {#if previousTide}
-	<p>{previousTide.type} {previousTide.time}</p>
-{/if}
-{#if nextTide}
-	<p>{nextTide.type} {nextTide.time}</p>
-{/if} -->
-
 <style>
-	.wrapper {
-		margin: 0 0 2em;
-	}
-
-	.loading {
-		color: #595959;
-		font-weight: 500;
-	}
-
-	h1 {
-		text-transform: uppercase;
-		margin: 0;
-	}
-
-	.the-fucking-tide {
-		font-size: 2.5rem;
-	}
-
-	.station {
-		margin: 0.25rem 0 0;
-		font-size: 0.8rem;
-		color: #595959;
+	.container {
+		margin: 0 0 10vh;
 	}
 </style>
 
 <script>
-	const getHighTideEmoji = () => {
-		const emojis = [
-			'🤙',
-			'🏄‍♀️',
-			'🏄‍♂️',
-			'🚤',
-			'🏖'
-		];
-
-		return emojis[Math.floor(Math.random() * emojis.length)];
-	};
+	import LoadingMessage from '../components/LoadingMessage.html';
+	import Message from '../components/Message.html';
+	import Search from '../components/Search.html';
 
 	export default {
+		components: {
+			LoadingMessage,
+			Message,
+			Search
+		},
 		data() {
 			return {
+				time: new Date(),
 				findingLocation: true,
 				locationError: false,
 				checkingTide: false,
@@ -72,6 +41,19 @@
 				stationName: null,
 				predictions: []
 			};
+		},
+		oncreate() {
+			if (this.interval) {
+				clearInterval(this.interval);
+			}
+
+			this.interval = setInterval(() => {
+				console.log('updating time');
+				this.set({ time: new Date() });
+			}, 1000 * 60);
+		},
+		ondestroy() {
+			clearInterval(this.interval);
 		},
 		onstate({ changed, current, previous }) {
 			if (!previous && !current.location) {
@@ -134,49 +116,31 @@
 				const index = predictions.indexOf(nextTide);
 				return predictions[index - 1];
 			},
-			tideProgress: ({ previousTide, nextTide }) => {
+			tideProgress: ({ time, previousTide, nextTide }) => {
 				if (!previousTide || !nextTide) {
 					return -1;
 				}
 
-				const timeSincePreviousTide = new Date() - new Date(previousTide.time);
+				const timeSincePreviousTide = time - new Date(previousTide.time);
 				const tideDifference = new Date(nextTide.time) - new Date(previousTide.time);
 				const progress = timeSincePreviousTide / tideDifference;
 
 				return progress;
-			},
-			message: ({ tideProgress, nextTide }) => {
-				if (tideProgress === -1) {
-					return '';
-				}
-
-				const messages = {
-					'low': 'Ugh, it’s fucking low tide.',
-					'rising1': 'The tide’s still pretty fucking low.',
-					'rising2': 'It’s almost fucking high tide.',
-					'high': `It’s fucking high tide. ${getHighTideEmoji()}`,
-					'falling1': 'The tide’s fucking ok, I guess.',
-					'falling2': 'The tide’s getting fucking low.',
-				};
-
-				const rising = nextTide.type === 'high';
-
-				if (tideProgress < 0.3) {
-					return rising ? messages.low : messages.high;
-				}
-
-				if (tideProgress < 0.6) {
-					return rising ? messages.rising1 : messages.falling1;
-				}
-
-				if (tideProgress < 0.7) {
-					return rising ? messages.rising2 : messages.falling2;
-				}
-
-				return rising ? messages.high : messages.low;
 			}
 		},
 		methods: {
+			handleSearch(event) {
+				this.set({
+					locationError: false,
+					findingLocation: true
+				});
+
+				return this.geocode(event.searchText).then(({ lat, lon }) => {
+					this.set({
+						location: { lat, lon }
+					});
+				});
+			},
 			getGeolocation() {
 				return new Promise((resolve, reject) => {
 					const success = ({ coords }) => {
@@ -212,6 +176,20 @@
 					}
 
 					return json.data;
+				});
+			},
+			geocode(search) {
+				const query = `
+					query($search: String!) {
+						geocode(query: $search) {
+							lat
+							lon
+						}
+					}
+				`;
+
+				return this.makeGraphQLRequest(query, { search }).then((data) => {
+					return data.geocode[0];
 				});
 			},
 			fetchPredictions({ lat, lon }) {
