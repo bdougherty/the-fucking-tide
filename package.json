@@ -1,7 +1,11 @@
 {
   "name": "the-fucking-tide",
-  "description": "TODO",
-  "version": "0.0.1",
+  "description": "Check the fucking tide.",
+  "version": "1.0.0",
+  "author": "Brad Dougherty <me@brad.is>",
+  "license": "MIT",
+  "repository": "bdougherty/the-fucking-tide",
+  "private": true,
   "scripts": {
     "dev": "sapper dev",
     "build": "sapper build",
