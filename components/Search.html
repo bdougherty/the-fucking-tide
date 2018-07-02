@@ -2,7 +2,7 @@
 	<h1>Where the fuck are you?</h1>
 	<div class="fields">
 		<input type="search" class="shadow" bind:value=searchText />
-		<button class="shadow" ref:submitButton>Fucking Tide</button>
+		<button class="shadow" ref:submitButton>Get the Fucking Tide</button>
 	</div>
 </form>
 
@@ -10,35 +10,33 @@
 	.fields {
 		margin-top: 1rem;
 		display: flex;
+		flex-direction: column;
 		align-content: center;
+		justify-content: center;
 	}
 
 	.shadow {
-		border-radius: 5px;
 		box-shadow: 0 1px 5px rgba(50, 50, 50, 0.2);
 	}
 
 	input[type="search"] {
 		border: 2px solid #00ced1;
+		border-radius: 1.2rem;
 		font-size: 1.2rem;
-		height: 2rem;
-		padding: .2rem .75rem;
+		padding: 0.2rem 0.5rem;
 		flex: 1 1 auto;
-		transition: box-shadow 100ms, border 100ms;
+		transition: box-shadow 100ms;
+		-webkit-appearance: none;
 	}
 
-	/* input[type="search"]:focus {
-		outline: 2px solid #00ced1;
-	} */
-
 	button {
-		font-size: 1rem;
 		border: 0;
-		height: 2rem;
+		border-radius: 5px;
+		font-size: 1.2rem;
 		color: #000;
 		background-color: #00ced1;
 		padding: 0.4rem 0.8rem;
-		margin-left: 1rem;
+		margin: 1rem auto 0;
 		transition: transform 250ms, box-shadow 100ms;
 	}
 
