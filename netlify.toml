@@ -8,6 +8,6 @@
 		X-Content-Type-Options = "nosniff"
 		X-Frame-Options = "SAMEORIGIN"
 		X-XSS-Protection = "1; mode=block"
-		Content-Security-Policy = "default-src 'self'; connect-src 'self' https://api.tides.app; report-uri https://bdougherty.report-uri.com/r/d/csp/enforce; upgrade-insecure-requests"
+		Content-Security-Policy = "default-src 'self' 'unsafe-inline'; connect-src 'self' https://api.tides.app; report-uri https://bdougherty.report-uri.com/r/d/csp/enforce; upgrade-insecure-requests"
 		Cross-Origin-Window-Policy = "deny"
 		Referrer-Policy = "strict-origin-when-cross-origin"
