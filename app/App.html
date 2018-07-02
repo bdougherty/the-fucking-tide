@@ -2,7 +2,12 @@
 	<svelte:component this={Page} {...props}/>
 </main>
 <footer>
-	<p>from <a href="https://secretspaceagency.com">Secret Space Agency</a></p>
+	<p>
+		{#if props.path !== "/about"}
+			<a href="/about">About</a>.
+		{/if}
+		Run by the <a href="https://secretspaceagency.com">Secret Space Agency</a>.
+	</p>
 </footer>
 
 <style>
