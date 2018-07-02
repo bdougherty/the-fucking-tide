@@ -2,23 +2,15 @@
 	<title>The Fucking Tide</title>
 </svelte:head>
 
-<div class="container">
-	{#if findingLocation}
-		<LoadingMessage>Finding your fucking location</LoadingMessage>
-	{:elseif locationError}
-		<Search on:search="handleSearch(event)" />
-	{:elseif checkingTide}
-		<LoadingMessage>Checking the fucking tide</LoadingMessage>
-	{:else}
-		<Message station={stationName} progress={tideProgress} rising={nextTide.type === 'high'} />
-	{/if}
-</div>
-
-<style>
-	.container {
-		margin: 0 0 10vh;
-	}
-</style>
+{#if findingLocation}
+	<LoadingMessage>Finding your fucking location</LoadingMessage>
+{:elseif locationError}
+	<Search on:search="handleSearch(event)" />
+{:elseif checkingTide}
+	<LoadingMessage>Checking the fucking tide</LoadingMessage>
+{:else}
+	<Message station={stationName} progress={tideProgress} rising={nextTide.type === 'high'} />
+{/if}
 
 <script>
 	import LoadingMessage from '../components/LoadingMessage.html';
