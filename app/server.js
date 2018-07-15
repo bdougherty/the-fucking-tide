@@ -20,6 +20,7 @@ polka()
 					locationError: null,
 					location: null,
 					fetchingPredictions: false,
+					predictionError: null,
 					predictions: [],
 					stationName: null,
 					stationDistance: -1

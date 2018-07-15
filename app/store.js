@@ -121,8 +121,13 @@ class FuckingTideStore extends Store {
 		const json = await request.json();
 
 		if (json.errors) {
-			console.info(json.errors);
-			throw new Error('there was an error');
+			const errorString = json.errors.map(({ message }) => `“${message}”`).join(', ');
+
+			if (json.errors.length > 1) {
+				throw new Error(`There were multiple GraphQL errors: ${errorString}`);
+			}
+
+			throw new Error(`GraphQL error: ${errorString}`);
 		}
 
 		return json.data;
@@ -140,7 +145,8 @@ class FuckingTideStore extends Store {
 
 		try {
 			this.set({
-				findingLocation: true
+				findingLocation: true,
+				locationError: null
 			});
 
 			const data = await this.makeGraphQLRequest(query, { search });
@@ -183,28 +189,38 @@ class FuckingTideStore extends Store {
 			return;
 		}
 
-		if (!silent) {
+		try {
+			if (!silent) {
+				this.set({
+					fetchingPredictions: true,
+					predictionError: null
+				});
+			}
+
+			const { lat, lon } = location;
+			const data = await this.makeGraphQLRequest(query, {
+				coordinate: {
+					lat,
+					lon
+				}
+			});
+
+			const { name, distance, predictions } = data.tideStations[0];
+
 			this.set({
-				fetchingPredictions: true
+				fetchingPredictions: false,
+				predictionError: null,
+				predictions,
+				stationName: name,
+				stationDistance: distance
 			});
 		}
-
-		const { lat, lon } = location;
-		const data = await this.makeGraphQLRequest(query, {
-			coordinate: {
-				lat,
-				lon
-			}
-		});
-
-		const { name, distance, predictions } = data.tideStations[0];
-
-		this.set({
-			fetchingPredictions: false,
-			predictions,
-			stationName: name,
-			stationDistance: distance
-		});
+		catch (error) {
+			this.set({
+				fetchingPredictions: false,
+				predictionError: error
+			});
+		}
 	}
 }
 

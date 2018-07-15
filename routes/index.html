@@ -8,21 +8,22 @@
 	<Search on:search="$geocode(event.searchText)" />
 {:elseif $fetchingPredictions}
 	<LoadingMessage>Checking the fucking tide</LoadingMessage>
-{:elseif $tideError}
-	<h1>We fucked up</h1>
-	<p>Check back later.</p>
+{:elseif $predictionError}
+	<ErrorMessage error={$predictionError} />
 {:else}
 	<TideMessage station={$stationName} progress={$tideProgress} nextTide={$nextTide} />
 {/if}
 
 <script>
 	import LoadingMessage from '../components/LoadingMessage.html';
+	import ErrorMessage from '../components/ErrorMessage.html';
 	import TideMessage from '../components/TideMessage.html';
 	import Search from '../components/Search.html';
 
 	export default {
 		components: {
 			LoadingMessage,
+			ErrorMessage,
 			TideMessage,
 			Search
 		},
