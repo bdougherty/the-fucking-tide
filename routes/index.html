@@ -12,18 +12,18 @@
 	<h1>We fucked up</h1>
 	<p>Check back later.</p>
 {:else}
-	<Message station={$stationName} progress={$tideProgress} nextTide={$nextTide} />
+	<TideMessage station={$stationName} progress={$tideProgress} nextTide={$nextTide} />
 {/if}
 
 <script>
 	import LoadingMessage from '../components/LoadingMessage.html';
-	import Message from '../components/Message.html';
+	import TideMessage from '../components/TideMessage.html';
 	import Search from '../components/Search.html';
 
 	export default {
 		components: {
 			LoadingMessage,
-			Message,
+			TideMessage,
 			Search
 		},
 		oncreate() {
