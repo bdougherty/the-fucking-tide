@@ -1,6 +1,8 @@
 <div>
 	<h1 class="the-fucking-tide">{message}</h1>
-	<p class="station">at {station}</p>
+	<p class="station">
+		{nextTideType} tide is {nextTideTime} at {station}.
+	</p>
 </div>
 
 <style>
@@ -59,6 +61,17 @@
 				}
 
 				return rising ? messages.high : messages.low;
+			},
+			nextTideType: ({ nextTide }) => {
+				return nextTide.type === 'high' ? 'High' : 'Low';
+			},
+			nextTideTime: ({ nextTide }) => {
+				const date = new Date(nextTide.time);
+
+				return new Intl.DateTimeFormat('en-US', {
+					hour: 'numeric',
+					minute: 'numeric'
+				}).format(date);
 			}
 		}
 	};
