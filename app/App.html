@@ -23,3 +23,14 @@
 		font-size: 0.75rem;
 	}
 </style>
+
+<script>
+	export default {
+		oncreate() {
+			this.store.startTimer();
+		},
+		ondestroy() {
+			this.store.stopTimer()
+		}
+	};
+</script>

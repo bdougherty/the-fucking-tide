@@ -33,6 +33,9 @@
 
 	export default {
 		computed: {
+			rising: ({ nextTide }) => {
+				return nextTide.type === 'high';
+			},
 			message: ({ progress, rising }) => {
 				const messages = {
 					'low': 'Ugh, it’s fucking low tide. 😫',
