@@ -174,7 +174,7 @@ class FuckingTideStore extends Store {
 			query($coordinate: Coordinate!) {
 				tideStations(coordinate: $coordinate, limit: 1) {
 					name
-					distance
+					distance(units: mi)
 					predictions {
 						type
 						time

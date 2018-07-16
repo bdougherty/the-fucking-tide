@@ -8,8 +8,10 @@
 	<Search on:search="$geocode(event.searchText)" />
 {:elseif $fetchingPredictions}
 	<LoadingMessage>Checking the fucking tide</LoadingMessage>
+{:elseif $stationDistance > 30}
+	<ErrorMessage title="Uhh, there aren’t any tides near you.">Go somewhere closer to some fucking tidal water {distanceEmoji($stationDistance)}.</ErrorMessage>
 {:elseif $predictionError}
-	<ErrorMessage error={$predictionError} />
+	<ErrorMessage title="We fucked up" error={$predictionError}>Check back later.</ErrorMessage>
 {:else}
 	<TideMessage station={$stationName} progress={$tideProgress} nextTide={$nextTide} />
 {/if}
@@ -32,6 +34,20 @@
 
 			if (!location) {
 				this.store.getGeolocation();
+			}
+		},
+		helpers: {
+			distanceEmoji(distance) {
+				if (distance < 500) {
+					const emojis = [
+						'🚗',
+						'🚙'
+					];
+
+					return emojis[Math.floor(Math.random() * emojis.length)];
+				}
+
+				return '✈️';
 			}
 		}
 	};
