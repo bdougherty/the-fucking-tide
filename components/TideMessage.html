@@ -1,8 +1,7 @@
 <div>
 	<h1 class="the-fucking-tide">{message}</h1>
-	<p class="station">
-		{nextTideType} tide is {nextTideTime} at {station}.
-	</p>
+	<p class="station">{nextTideType} tide is {nextTideTime} at {station}.</p>
+	<p class="more-info"><a href={tidesAppLink} target="_blank">Get some more fucking details.</a></p>
 </div>
 
 <style>
@@ -10,7 +9,8 @@
 		font-size: 2.5rem;
 	}
 
-	.station {
+	.station,
+	.more-info {
 		font-size: 0.8rem;
 		color: #595959;
 		margin: 0.25rem 0 0;
@@ -75,6 +75,10 @@
 					hour: 'numeric',
 					minute: 'numeric'
 				}).format(date);
+			},
+			tidesAppLink: ({ $location }) => {
+				const { lat, lon } = $location;
+				return `https://tides.app/tides/${lat},${lon}`;
 			}
 		}
 	};
