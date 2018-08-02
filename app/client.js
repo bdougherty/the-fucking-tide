@@ -1,12 +1,10 @@
 import { init } from 'sapper/runtime.js';
-import { routes } from './manifest/client.js';
-import App from './App.html';
+import { manifest } from './manifest/client.js';
 import FuckingTideStore from './store';
 
 init({
 	target: document.querySelector('#sapper'),
-	routes,
-	App,
+	manifest,
 	store: (data) => {
 		const store = new FuckingTideStore(data);
 
