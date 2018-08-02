@@ -7,7 +7,7 @@
   "repository": "bdougherty/the-fucking-tide",
   "private": true,
   "scripts": {
-    "dev": "sapper dev",
+    "dev": "node --inspect=0 node_modules/.bin/sapper dev",
     "build": "sapper build",
     "export": "sapper export",
     "start": "node build",
