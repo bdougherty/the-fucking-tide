@@ -17,6 +17,7 @@ body {
 
 a {
 	color: #000;
+	-webkit-text-decoration-color: #00cdd1;
 	text-decoration-color: #00cdd1;
 	transition: color 150ms ease-out;
 }
