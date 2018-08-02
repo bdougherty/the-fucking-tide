@@ -12,3 +12,4 @@
 		Cross-Origin-Window-Policy = "deny"
 		Feature-Policy = "geolocation 'self'; camera 'none'; fullscreen 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; midi 'none'; notifications 'none'; payment 'none'; push 'none'; speaker 'none'; sync-xhr 'none'; vibrate 'none'"
 		Referrer-Policy = "strict-origin-when-cross-origin"
+		Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
