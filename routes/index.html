@@ -29,13 +29,6 @@
 			TideMessage,
 			Search
 		},
-		oncreate() {
-			const { location } = this.store.get();
-
-			if (!location) {
-				this.store.getGeolocation();
-			}
-		},
 		helpers: {
 			distanceEmoji(distance) {
 				if (distance < 500) {
@@ -48,6 +41,13 @@
 				}
 
 				return '✈️';
+			}
+		},
+		oncreate() {
+			const { location } = this.store.get();
+
+			if (!location) {
+				this.store.getGeolocation();
 			}
 		}
 	};

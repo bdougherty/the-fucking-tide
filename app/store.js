@@ -1,4 +1,4 @@
-import { Store } from 'svelte/store.js';
+import { Store } from 'svelte/store';
 
 class FuckingTideStore extends Store {
 	constructor(data) {
@@ -16,8 +16,6 @@ class FuckingTideStore extends Store {
 				if (current.location && predictions.indexOf(nextTide) === predictions.length - 1) {
 					this.fetchPredictions(true);
 				}
-
-				return;
 			}
 		});
 
