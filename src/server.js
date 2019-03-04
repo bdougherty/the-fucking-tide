@@ -1,16 +1,17 @@
 import sirv from 'sirv';
 import polka from 'polka';
-import sapper from 'sapper';
 import compression from 'compression';
-import { manifest } from './manifest/server';
+import * as sapper from '../__sapper__/server.js';
 import FuckingTideStore from './store';
+
+const { PORT, NODE_ENV } = process.env;
+const dev = NODE_ENV === 'development';
 
 polka()
 	.use(
 		compression({ threshold: 0 }),
-		sirv('assets'),
-		sapper({
-			manifest,
+		sirv('static', { dev }),
+		sapper.middleware({
 			store: () => {
 				return new FuckingTideStore({
 					time: null,
@@ -26,7 +27,6 @@ polka()
 			}
 		})
 	)
-	.listen(process.env.PORT)
-	.catch((err) => {
-		console.log('error', err);
+	.listen(PORT, err => {
+		if (err) console.log('error', err);
 	});
