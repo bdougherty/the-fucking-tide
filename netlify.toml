@@ -1,5 +1,5 @@
 [build]
-	publish = "export"
+	publish = "__sapper__/export"
 	command = "npm run export"
 
 [[headers]]
