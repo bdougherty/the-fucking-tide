@@ -1,13 +1,13 @@
 {
-  "name": "the-fucking-tide",
-  "description": "Check the fucking tide.",
-  "version": "1.0.0",
-  "author": "Brad Dougherty <me@brad.is>",
-  "license": "MIT",
-  "repository": "bdougherty/the-fucking-tide",
+	"name": "the-fucking-tide",
+	"description": "Check the fucking tide.",
+	"version": "1.0.0",
+	"author": "Brad Dougherty <me@brad.is>",
+	"license": "MIT",
+	"repository": "bdougherty/the-fucking-tide",
 	"type": "module",
-  "private": true,
-  "scripts": {
+	"private": true,
+	"scripts": {
 		"dev": "svelte-kit dev",
 		"build": "svelte-kit build",
 		"package": "svelte-kit package",
@@ -18,8 +18,8 @@
 		"test": "playwright test",
 		"lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
 		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
-  },
-  "devDependencies": {
+	},
+	"devDependencies": {
 		"@playwright/test": "1.21.1",
 		"@sveltejs/adapter-auto": "1.0.0-next.35",
 		"@sveltejs/kit": "1.0.0-next.317",
@@ -31,6 +31,7 @@
 		"prettier-plugin-svelte": "^2.5.0",
 		"svelte": "3.47.0",
 		"svelte-check": "2.7.0",
+		"svelte-fsm": "^1.1.2",
 		"typescript": "4.6.3"
-  }
+	}
 }
