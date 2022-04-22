@@ -2,6 +2,8 @@
 	import fsm from 'svelte-fsm';
 	import { browser } from '$app/env';
 	import { geocode, getTideStation, getGeolocation } from '$lib/api';
+	import { shouldFetchPredictions } from '$lib/tides';
+	import now from '$lib/stores/time';
 
 	import DotWave from '$lib/components/DotWave.svelte';
 	import Forecast from '$lib/components/Forecast.svelte';
@@ -77,9 +79,15 @@
 			success: 'forecast',
 			error: 'error'
 		},
-		forecast: {},
+		forecast: {
+			refresh: 'gettingForecast'
+		},
 		error: {}
 	});
+
+	$: if (tideStation && shouldFetchPredictions(tideStation.predictions, $now)) {
+		state.refresh();
+	}
 </script>
 
 <svelte:head>
