@@ -1,20 +1,7 @@
 <script>
-	/**
-	 * @typedef TidePrediction
-	 * @property {"high" | "low"} type
-	 * @property {string} time
-	 */
-	/**
-	 * @typedef TideStation
-	 * @property {string} name
-	 * @property {number} distance
-	 * @property {Array<TidePrediction>} predictions
-	 */
-
-	/**
-	 * @type TideStation
-	 */
+	/** @type {import('src/app').TideStation} */
 	export let tideStation;
+	/** @type {import('src/app').Coordinate} */
 	export let coordinate;
 
 	/**
@@ -29,28 +16,14 @@
 	 */
 	function getDistanceEmoji(distance) {
 		if (distance < 500) {
-			return getRandomEmoji([
-				'🚗',
-				'🚙'
-			]);
+			return getRandomEmoji(['🚗', '🚙']);
 		}
 
 		return '✈️';
 	}
 
 	function getHighTideEmoji() {
-		return getRandomEmoji([
-			'🤙',
-			'🏄‍♀️',
-			'🏄‍♂️',
-			'🛶',
-			'🚤',
-			'⛵️',
-			'🛥',
-			'🏖',
-			'😎',
-			'💯'
-		]);
+		return getRandomEmoji(['🤙', '🏄‍♀️', '🏄‍♂️', '🛶', '🚤', '⛵️', '🛥', '🏖', '😎', '💯']);
 	}
 
 	// todo - move to parent and make it an updating store
@@ -58,8 +31,8 @@
 
 	/**
 	 *
-	 * @param {TidePrediction} previous
-	 * @param {TidePrediction} next
+	 * @param {import('src/app').TidePrediction} previous
+	 * @param {import('src/app').TidePrediction} next
 	 */
 	function getTideProgress(previous, next) {
 		const previousTime = new Date(previous.time).getTime();
@@ -70,6 +43,10 @@
 		return progress;
 	}
 
+	/**
+	 * @param {import('src/app').TidePrediction} nextTide
+	 * @param {number} progress
+	 */
 	function getTideMessage(nextTide, progress) {
 		const rising = nextTide.type === 'high';
 		const messages = {
@@ -120,7 +97,7 @@
 		at {tideStation.name}.
 	</p>
 	<p class="more-info">
-		<a href="https://tides.app/tides/{coordinate.lat.toFixed(4)},{coordinate.lon.toFixed(4)}" target="_blank">
+		<a href="https://tides.app/tides/{coordinate.lat},{coordinate.lon}" target="_blank">
 			Get some more fucking details.
 		</a>
 	</p>

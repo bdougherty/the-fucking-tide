@@ -1,17 +1,19 @@
 <script>
-	import { browser } from '$app/env';
-import Forecast from '$lib/components/Forecast.svelte';
 	import fsm from 'svelte-fsm';
+	import { browser } from '$app/env';
+	import { geocode, getTideStation, getGeolocation } from '$lib/api';
 
+	import DotWave from '$lib/components/DotWave.svelte';
+	import Forecast from '$lib/components/Forecast.svelte';
+	import Search from '$lib/components/Search.svelte';
+
+	/** @type {import('src/app').Coordinate?} */
 	let coordinate = null;
-	let searchText = '';
+
+	/** @type {import('src/app').TideStation?} */
 	let tideStation = null;
 
-	function gql(strings) {
-		return strings.map((string) => {
-			return string.replace(/\s+/g, ' ').replace(/\s?([{}():])\s?/g, '$1').trim();
-		}).join('');
-	}
+	let searchText = '';
 
 	const state = fsm('initial', {
 		initial: {
@@ -35,90 +37,42 @@ import Forecast from '$lib/components/Forecast.svelte';
 		},
 		submittingSearch: {
 			_enter() {
-				// request coordinates
-				console.log('request for', searchText);
-				fetch('https://api.tides.app/graphql', {
-					method: 'POST',
-					body: JSON.stringify({
-						query: gql`
-							query($searchText: String!) {
-								geocode(query: $searchText) {
-									lat
-									lon
-								}
-							}
-						`,
-						variables: {
-							searchText
-						}
+				geocode(searchText)
+					.then((coords) => {
+						coordinate = coords;
+						this.success();
 					})
-				})
-				.then((response) => response.json())
-				.then(({ data }) => {
-					coordinate = data.geocode[0];
-					this.success();
-				})
-				.catch(() => {
-					this.error();
-				});
+					.catch(() => {
+						this.error();
+					});
 			},
 			success: 'gettingForecast',
 			error: 'search'
 		},
 		geolocationPrompt: {
 			_enter() {
-				/**
-				 * @param GeolocationPosition
-				 */
-				const onSuccess = ({ coords }) => {
-					coordinate = {
-						lat: coords.latitude,
-						lon: coords.longitude
-					};
-
-					this.success();
-				};
-
-				const onError = (error) => {
-					console.log(error);
-					this.error();
-				}
-
-				navigator.geolocation.getCurrentPosition(onSuccess, onError);
+				getGeolocation()
+					.then((coords) => {
+						coordinate = coords;
+						this.success();
+					})
+					.catch(() => {
+						this.error();
+					});
 			},
 			success: 'gettingForecast',
 			error: 'search'
 		},
 		gettingForecast: {
 			_enter() {
-				fetch('https://api.tides.app/graphql', {
-					method: 'POST',
-					body: JSON.stringify({
-						query: gql`
-							query($coordinate: Coordinate!) {
-								tideStations(coordinate: $coordinate, limit: 1) {
-									name
-									distance(units:mi)
-									predictions {
-										type
-										time
-									}
-								}
-							}
-						`,
-						variables: {
-							coordinate
-						}
+				getTideStation(coordinate)
+					.then((station) => {
+						tideStation = station;
+						this.success();
 					})
-				})
-				.then((response) => response.json())
-				.then(({ data }) => {
-					tideStation = data.tideStations[0];
-					this.success();
-				})
-				.catch(() => {
-					this.error();
-				});
+					.catch(() => {
+						this.error();
+					});
 			},
 			success: 'forecast',
 			error: 'error'
@@ -126,30 +80,27 @@ import Forecast from '$lib/components/Forecast.svelte';
 		forecast: {},
 		error: {}
 	});
-
-	function handleSubmit() {
-		state.submit();
-	}
 </script>
 
 <svelte:head>
 	<title>The Fucking Tide</title>
 </svelte:head>
 
-{#if $state === 'geolocationPrompt' || $state === 'submittingSearch'}
-	<h1 class="loading">Finding your fucking location…</h1>
-{:else if $state === 'gettingForecast'}
-	<h1 class="loading">Checking the fucking tide…</h1>
+{#if $state === 'geolocationPrompt' || $state === 'submittingSearch' || $state === 'gettingForecast'}
+	<h1 class="loading">
+		{#if $state === 'gettingForecast'}
+			Checking the fucking tide
+		{:else}
+			Finding your fucking location
+		{/if}
+		<DotWave --dw-size="0.75em" />
+	</h1>
 {:else if $state === 'search' || $state === 'initial'}
-	<form on:submit|preventDefault={handleSubmit}>
-		<h1>Where the fuck are you?</h1>
-		<div class="fields">
-			<input type="search" class="shadow" bind:value="{searchText}" />
-			<button class="shadow">Get the Fucking Tide</button>
-		</div>
-	</form>
+	<Search bind:value={searchText} on:submit={() => state.submit()} />
 {:else if $state === 'forecast'}
-	<Forecast tideStation={tideStation} coordinate={coordinate} />
+	{#if tideStation && coordinate}
+		<Forecast {tideStation} {coordinate} />
+	{/if}
 {:else if $state === 'error'}
 	<h1>We fucked up</h1>
 	<p>Check back later.</p>
@@ -157,7 +108,7 @@ import Forecast from '$lib/components/Forecast.svelte';
 
 <style>
 	.loading {
-		color: #595959;
+		color: var(--text-secondary);
 		font-weight: 500;
 	}
 </style>

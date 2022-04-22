@@ -8,3 +8,19 @@ declare namespace App {
 	// interface Session {}
 	// interface Stuff {}
 }
+
+export type TidePrediction = {
+	type: 'high' | 'low';
+	time: string;
+};
+
+export type TideStation = {
+	name: string;
+	distance: number;
+	predictions: [TidePrediction];
+};
+
+export type Coordinate = {
+	lat: number;
+	lon: number;
+};

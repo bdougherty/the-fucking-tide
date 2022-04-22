@@ -10,7 +10,7 @@
 </script>
 
 <script>
-  export let message;
+	export let message;
 </script>
 
 <h1>WTF?</h1>
