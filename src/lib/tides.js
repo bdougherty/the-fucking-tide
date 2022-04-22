@@ -41,7 +41,7 @@ export function shouldFetchPredictions(predictions, now) {
  */
 export function getTideProgress(previous, next, now) {
 	if (!previous || !next) {
-		return 0
+		return 0;
 	}
 
 	const previousTime = new Date(previous.time).getTime();
@@ -53,8 +53,8 @@ export function getTideProgress(previous, next, now) {
 }
 
 /**
-	 * @param {Array<string>} emojis
-	 */
+ * @param {Array<string>} emojis
+ */
 function getRandomEmoji(emojis) {
 	return emojis[Math.floor(Math.random() * emojis.length)];
 }

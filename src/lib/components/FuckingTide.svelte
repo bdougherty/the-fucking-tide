@@ -21,16 +21,14 @@
 		{:else}
 			It’s fucking high tide. {getHighTideEmoji()}
 		{/if}
+	{:else if progress < 0.3}
+		It’s fucking high tide. {getHighTideEmoji()}
+	{:else if progress < 0.6}
+		The tide’s fucking ok, I guess.
+	{:else if progress < 0.7}
+		The tide’s getting fucking low. 😞
 	{:else}
-		{#if progress < 0.3}
-			It’s fucking high tide. {getHighTideEmoji()}
-		{:else if progress < 0.6}
-			The tide’s fucking ok, I guess.
-		{:else if progress < 0.7}
-			The tide’s getting fucking low. 😞
-		{:else}
-			Ugh, it’s fucking low tide. 😫
-		{/if}
+		Ugh, it’s fucking low tide. 😫
 	{/if}
 </h1>
 

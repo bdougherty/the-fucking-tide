@@ -12,7 +12,8 @@
 	export let coordinate;
 
 	$: nextTide = getNextTide(tideStation.predictions, $now);
-	$: previousTide = nextTide && tideStation.predictions[tideStation.predictions.indexOf(nextTide) - 1];
+	$: previousTide =
+		nextTide && tideStation.predictions[tideStation.predictions.indexOf(nextTide) - 1];
 	$: progress = getTideProgress(previousTide, nextTide, $now);
 </script>
 
