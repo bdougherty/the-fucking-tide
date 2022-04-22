@@ -1,7 +1,7 @@
 {
 	"name": "the-fucking-tide",
 	"description": "Check the fucking tide.",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"author": "Brad Dougherty <me@brad.is>",
 	"license": "MIT",
 	"repository": "bdougherty/the-fucking-tide",
