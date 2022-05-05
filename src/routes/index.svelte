@@ -91,7 +91,11 @@
 </script>
 
 <svelte:head>
-	<title>The Fucking Tide</title>
+	{#if $state === 'forecast' && tideStation}
+		<title>The Fucking Tide for {tideStation.name}</title>
+	{:else}
+		<title>The Fucking Tide</title>
+	{/if}
 </svelte:head>
 
 {#if $state === 'geolocationPrompt' || $state === 'submittingSearch' || $state === 'gettingForecast'}

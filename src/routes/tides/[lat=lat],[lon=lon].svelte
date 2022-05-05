@@ -11,4 +11,8 @@
 	};
 </script>
 
+<svelte:head>
+	<title>The Fucking Tide for {tideStation.name}</title>
+</svelte:head>
+
 <Forecast {tideStation} {coordinate} />
