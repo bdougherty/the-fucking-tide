@@ -1,0 +1,16 @@
+{
+	"name": "tides.app",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": { "VARIANT": "14-bullseye" }
+	},
+	"settings": {},
+	"extensions": [
+		"dbaeumer.vscode-eslint",
+		"editorconfig.editorconfig",
+		"svelte.svelte-vscode"
+	],
+	"forwardPorts": [3103],
+	"postCreateCommand": "npm install",
+	"remoteUser": "node"
+}
