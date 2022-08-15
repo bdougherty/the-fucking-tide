@@ -2,8 +2,8 @@
 	import { page } from '$app/stores';
 	import Forecast from '$lib/components/Forecast.svelte';
 
-	/** @type {import('src/app').TideStation} */
-	export let tideStation;
+	/** @type {import('./$types').PageData} */
+	export let data;
 
 	$: coordinate = {
 		lat: Number.parseFloat($page.params.lat),
@@ -12,7 +12,7 @@
 </script>
 
 <svelte:head>
-	<title>The Fucking Tide for {tideStation.name}</title>
+	<title>The Fucking Tide for {data.tideStation.name}</title>
 </svelte:head>
 
-<Forecast {tideStation} {coordinate} />
+<Forecast tideStation={data.tideStation} {coordinate} />
