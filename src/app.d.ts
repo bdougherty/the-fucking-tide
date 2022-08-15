@@ -10,7 +10,7 @@ declare namespace App {
 }
 
 export type TidePrediction = {
-	type: 'high' | 'low';
+	type: 'HIGH' | 'LOW';
 	time: string;
 };
 

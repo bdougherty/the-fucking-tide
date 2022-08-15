@@ -7,7 +7,7 @@
 	/** @type {number} */
 	export let progress;
 
-	$: rising = nextTide.type === 'high';
+	$: rising = nextTide.type.toLowerCase() === 'high';
 </script>
 
 <h1>

@@ -11,7 +11,7 @@
 </script>
 
 <p>
-	{#if nextTide.type === 'high'}
+	{#if nextTide.type.toLowerCase() === 'high'}
 		High
 	{:else}
 		Low
