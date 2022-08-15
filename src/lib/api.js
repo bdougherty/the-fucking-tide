@@ -1,3 +1,5 @@
+import { PUBLIC_API_URL } from '$env/static/public';
+
 /**
  * @param {TemplateStringsArray} strings
  * @returns {string}
@@ -52,7 +54,7 @@ export function getGeolocation() {
  * @returns {Promise<import('src/app').Coordinate>}
  */
 export async function geocode(search) {
-	const response = await fetch(import.meta.env.VITE_API_URL, {
+	const response = await fetch(PUBLIC_API_URL, {
 		method: 'POST',
 		body: JSON.stringify({
 			query: gql`
@@ -78,7 +80,7 @@ export async function geocode(search) {
  * @returns {Promise<import('src/app').TideStation>}
  */
 export async function getTideStation(coordinate) {
-	const response = await fetch(import.meta.env.VITE_API_URL, {
+	const response = await fetch(PUBLIC_API_URL, {
 		method: 'POST',
 		body: JSON.stringify({
 			query: gql`
