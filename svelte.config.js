@@ -7,8 +7,10 @@ const config = {
 		csp: {
 			mode: 'auto',
 			directives: {
-				'default-src': ['self'],
-				'connect-src': ['https://api.tides.app']
+				// https://web.dev/strict-csp/
+				'script-src': ['strict-dynamic', 'https:', 'unsafe-inline'],
+				'object-src': ['none'],
+				'base-uri': ['none']
 			}
 		}
 	}
